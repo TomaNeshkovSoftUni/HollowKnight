@@ -7,7 +7,6 @@ const states = {
 class State {
     constructor(state){
         this.state = state;
-
     }
 }
 
@@ -17,7 +16,7 @@ export class Standing extends State {
         this.player = player;
      }
      enter(){
-
+        this.player.frameY = 0;
      }
      handleInput(input){
 

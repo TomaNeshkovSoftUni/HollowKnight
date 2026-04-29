@@ -1,5 +1,4 @@
-import { Player } from "./player.js";
-import { InputHandler } from "./fsm.js";
+import { Player, InputHandler } from "./player.js";
 
 window.addEventListener('load', function(){
     const canvas = document.getElementById('canvas');

@@ -1,13 +1,13 @@
-import { Standing } from "./fsm";
+import { Standing } from "./fsm.js";
 
 export class Player{
     constructor(game){
         this.game = game;
-        this.width = 728 / 9;
-        this.height = 81;
+        this.width = 2048 / 16;
+        this.height = 126;
         this.x = 0;
         this.y = this.game.height - this.height;
-        this.image = document.getElementById("knightWalk")
+        this.image = document.getElementById("player")
         this.frameX = 0;
         this.frameY = 0;
         this.weight = 1;
@@ -25,7 +25,7 @@ export class Player{
             this.speed = this.maxSpeed
         }
         else if(input.includes('ArrowLeft')){
-            this.speed = this.speed = -this.maxSpeed
+            this.speed = -this.maxSpeed;
         }
         else{
             this.speed = 0
@@ -38,12 +38,12 @@ export class Player{
             this.x = this.game.width - this.width
         }
 
-        this.y += this.vy;
-
-        if(input.includes('c') && this.onGround()){
-            this.vy -= 15;
+        
+        if(input.includes('z') && this.onGround()){
+            this.vy -= 25;
         }
-        this.y += this.vy
+
+        this.y += this.vy;
         
         if(!this.onGround()){
             this.vy += this.weight
@@ -54,12 +54,26 @@ export class Player{
     }
 
     draw(context){
-
-        context.drawImage(this.image, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height)
+        context.drawImage(
+        this.image,
+        this.frameX * this.width,
+        this.frameY * this.height,
+        this.width,
+        this.height,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+        );
     }
 
     onGround(){
         return this.y >= this.game.height - this.height; 
+    }
+
+    setState(state){
+        this.currentState = this.states[state];
+        this.currentState.enter();
     }
 }
 
@@ -73,7 +87,7 @@ export class InputHandler{
                 || e.key === 'ArrowUp'
                 || e.key === 'ArrowLeft'
                 || e.key === 'ArrowRight'
-                || e.key === 'c'
+                || e.key === 'z'
             ) && this.keys.indexOf(e.key) === -1){
 
                 this.keys.push(e.key);
@@ -85,10 +99,9 @@ export class InputHandler{
             
             if(e.key === 'ArrowDown' 
                 || e.key === 'ArrowUp'
-                || e.key === 'ArrowUp'
                 || e.key === 'ArrowLeft'
                 || e.key === 'ArrowRight'
-                || e.key === 'c'
+                || e.key === 'z'
             ){
                 this.keys.splice(this.keys.indexOf(e.key), 1)
             }
