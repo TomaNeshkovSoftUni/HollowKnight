@@ -1,10 +1,10 @@
-import { Standing } from "./fsm.js";
+import { Standing, Walking, Jumping, Falling } from "./fsm.js";
 
 export class Player{
     constructor(game){
         this.game = game;
         this.width = 2048 / 16;
-        this.height = 126;
+        this.height = 128;
         this.x = 0;
         this.y = this.game.height - this.height;
         this.image = document.getElementById("player")
@@ -12,14 +12,20 @@ export class Player{
         this.frameY = 0;
         this.weight = 1;
         this.vy = 0;
+        this.maxFrame = 7;
+        this.fps = 12;
+        this.frameInterval = 1000/this.fps
+        this.frameTimer = 0;
         this.speed = 0;
-        this.maxSpeed = 2;
-        this.states = [new Standing(this)];
+        this.maxSpeed = 5;
+        this.states = [new Standing(this), new Walking(this), new Jumping(this), new Falling(this)];
         this.currentState = this.states[0];
         this.currentState.enter();
     }
 
-    update(input){
+    update(input, deltaTime){
+        this.currentState.handleInput(input)
+
         this.x += this.speed
         if(input.includes('ArrowRight')){
             this.speed = this.maxSpeed
@@ -38,11 +44,6 @@ export class Player{
             this.x = this.game.width - this.width
         }
 
-        
-        if(input.includes('z') && this.onGround()){
-            this.vy -= 25;
-        }
-
         this.y += this.vy;
         
         if(!this.onGround()){
@@ -50,6 +51,20 @@ export class Player{
         }
         else{
             this.vy = 0;
+        }
+
+        if(this.frameTimer > this.frameInterval){
+            this.frameTimer = 0;
+
+            if(this.frameX < this.maxFrame){
+                this.frameX++
+            }
+            else
+            {
+                this.frameX = 0
+            }
+        } else {
+            this.frameTimer += deltaTime;
         }
     }
 
